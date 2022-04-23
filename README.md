@@ -18,4 +18,5 @@ Nu=100, dt=0.02, dx=0.01, lr=0.001, num_epochs=0, num_hidden=9, num_nodes=20
 </p>
 
 ## To do
+- [ ] Add a numerical method
 - [ ] Add other PDEs
