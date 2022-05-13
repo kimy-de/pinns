@@ -1,5 +1,5 @@
 # Physics-informed neural networks (Pytorch)
-### Data-driven solution of Burger's equation - continuous time models
+### Data-driven solution of Burgers' equation - continuous time models
 
 [Reference] M.Raissi, P.Perdikaris, G.E.Karniadakis (2019) Physics-informed neural networks - A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations, Journal of Computational Physics Vol 378 (2019) pages 686–707, https://doi.org/10.1016/j.jcp.2018.10.045
 
