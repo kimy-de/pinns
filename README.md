@@ -15,7 +15,7 @@ L2 relative error, loss_result.png, inference.png, and inference_result.png
 
 ## 2. Results
 <p align="center">
-<img width="500" alt="r1" src="https://user-images.githubusercontent.com/52735725/172021813-93ba83ad-4443-4bb2-94b1-4c2584bb6490.png">
+<img width="500" alt="r1" src="https://user-images.githubusercontent.com/52735725/172022015-09c094e7-ae69-44fd-9319-b5039e436f15.png">
 <img width="700" alt="r" src="https://user-images.githubusercontent.com/52735725/164943040-a356729e-795e-42ed-b37a-9abf6fa8bb46.png">
 </p>
 
