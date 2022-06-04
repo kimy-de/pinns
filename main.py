@@ -6,6 +6,7 @@ import utils
 import model
 import numpy as np
 from tqdm import tqdm
+import scipy.io
 import matplotlib.pyplot as plt
 
 
@@ -14,6 +15,7 @@ if __name__ == "__main__":
     parser.add_argument('--dt', default=2e-2, type=float, help='dt')
     parser.add_argument('--dx', default=1e-2, type=float, help='dx')
     parser.add_argument('--Nu', default=100, type=int, help='N_u')
+    parser.add_argument('--pretrained', default=0, type=int, help='pretrained model')  
     parser.add_argument('--num_epochs', default=20000, type=int, help='number of epochs')  
     parser.add_argument('--num_hidden', default=9, type=int, help='number of hidden layers')   
     parser.add_argument('--num_nodes', default=20, type=int, help='number of nodes in each hidden layer')                      
@@ -33,6 +35,8 @@ if __name__ == "__main__":
     
     layer_list = [2] + args.num_hidden * [args.num_nodes] + [1]
     pinn = model.pinn(layer_list).to(device)
+    if args.pretrained == 1:
+        pinn.load_state_dict(torch.load('./bg1d.pth'))
     print("2. Completed loading a model..")
     
     print("3. Training Session")
@@ -73,9 +77,9 @@ if __name__ == "__main__":
     
     print("4. Inference Session")
     pinn.load_state_dict(torch.load('./bg1d.pth'))
-    t_test, x_test = data.bg_generator(1e-3, 1e-2, typ='test')
-    t = np.linspace(0, 1, 1000).reshape(-1,1)
-    x = np.linspace(-1, 1, 100).reshape(-1,1)
+    t_test, x_test = data.bg_generator(1e-2, 1/256, typ='test')
+    t = np.linspace(0, 0.99, 100).reshape(-1,1)
+    x = np.linspace(-1, 1, 256).reshape(-1,1)
     T = t.shape[0]
     N = x.shape[0]
     
@@ -85,24 +89,42 @@ if __name__ == "__main__":
     
     u_pred = u_pred.cpu().numpy().reshape(N,T)
     
+    # reference data
+    data = scipy.io.loadmat('./data/burgers_shock.mat')  
+    t = data['t'].flatten()[:,None]
+    x = data['x'].flatten()[:,None]
+    Exact = np.real(data['usol'])  
+    
+    err = u_pred-Exact
+    err = np.linalg.norm(err,2)/np.linalg.norm(Exact,2)   
+    print(f"L2 Relative Error: {err}")
+
     plt.figure(figsize=(10, 10))
     plt.subplot(2, 2, 1)
-    plt.plot(x, u_pred[:,0],'.-')
+    plt.plot(x, Exact[:,0],'-')
+    plt.plot(x, u_pred[:,0],'--')
+    plt.legend(['Actual', 'Prediction'])
     plt.title("Initial condition ($t=0$)")
     
     plt.subplot(2, 2, 2)
     t_step = int(0.3*len(t))
-    plt.plot(x, u_pred[:,t_step],'.-')
+    plt.plot(x, Exact[:,t_step],'-')
+    plt.plot(x, u_pred[:,t_step],'--')
+    plt.legend(['Actual', 'Prediction'])
     plt.title("Initial condition ($t=%.3f$)" %(1e-3*t_step))
     
     plt.subplot(2, 2, 3)
     t_step = int(0.5*len(t))
-    plt.plot(x, u_pred[:,t_step],'.-')
+    plt.plot(x, Exact[:,t_step],'-')
+    plt.plot(x, u_pred[:,t_step],'--')
+    plt.legend(['Actual', 'Prediction'])
     plt.title("Initial condition ($t=%.3f$)" %(1e-3*t_step))
     
     plt.subplot(2, 2, 4)
     t_step = int(0.75*len(t))
-    plt.plot(x, u_pred[:,t_step],'.-')
+    plt.plot(x, Exact[:,t_step],'-')
+    plt.plot(x, u_pred[:,t_step],'--')
+    plt.legend(['Actual', 'Prediction'])
     plt.title("Initial condition ($t=%.3f$)" %(1e-3*t_step))
     plt.savefig('./inference.png')
     
@@ -117,4 +139,3 @@ if __name__ == "__main__":
     plt.title('u(t,x)')
     plt.savefig('./inference_result.png')
     print("5. Completed")
-        
