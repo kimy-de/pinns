@@ -11,14 +11,16 @@ $ python main.py
 Nu=100, dt=0.02, dx=0.01, lr=0.001, num_epochs=0, num_hidden=9, num_nodes=20
 ```
 ### 1.2. Outputs
-L2 relative error, loss_result.png, inference.png, and inference_result.png
+L2 relative error, a training loss graph, and two result figures
 
 ## 2. Results
+### 2.1. Burgers' equation
 <p align="center">
 <img width="500" alt="r1" src="https://user-images.githubusercontent.com/52735725/172022015-09c094e7-ae69-44fd-9319-b5039e436f15.png">
 <img width="700" alt="r" src="https://user-images.githubusercontent.com/52735725/164943040-a356729e-795e-42ed-b37a-9abf6fa8bb46.png">
 </p>
 
 ## To do
-- [x] Add a reference dataset [source: https://github.com/maziarraissi/PINNs]
-- [ ] Add other PDEs
+- [x] Add reference datasets in the 'data' directory [source: https://github.com/maziarraissi/PINNs]
+- [x] Add Burgers' equation / Allen-Cahn equation in utils.py
+- [ ] Complete the codes for Allen-Cahn equation
