@@ -14,3 +14,10 @@ def burgers_equation(u, tx):
     e = u_t + u*u_x - (0.01/np.pi)*u_xx
     return e
 
+def ac_equation(u, tx):
+    u_tx = fwd_gradients(u, tx)
+    u_t = u_tx[:, 0:1]
+    u_x = u_tx[:, 1:2]
+    u_xx = fwd_gradients(u_x, tx)[:, 1:2]
+    e = u_t -0.0001*u_xx + 5*u**3 - 5*u
+    return e 
