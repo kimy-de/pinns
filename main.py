@@ -30,8 +30,7 @@ if __name__ == "__main__":
     if args.eq == 'bg':
         t_data, x_data, u_data, t_data_f, x_data_f = data.bg_generator(args.dt, args.dx, args.Nu)  
     elif args.eq == 'ac':
-        print("The data function is being prepared.") ###
-        exit(0)###
+        t_data, x_data, u_data, t_data_f, x_data_f = data.ac_generator(args.dt, args.dx, args.Nu)
     else:
         print("There exists no the equation.")
         exit(0)
@@ -45,11 +44,11 @@ if __name__ == "__main__":
     layer_list = [2] + args.num_hidden * [args.num_nodes] + [1]
     pinn = model.pinn(layer_list).to(device)
     if args.pretrained == 1:
-        pinn.load_state_dict(torch.load('./bg1d.pth'))
+        pinn.load_state_dict(torch.load('./'+args.eq+'1d.pth'))
     print("2. Completed loading a model..")
     
     print("3. Training Session")
-    optimizer = torch.optim.Adam(pinn.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(pinn.parameters(), betas=(0.999,0.999), lr=args.lr)
     
     loss_graph = []
     ls = 1e-3
@@ -89,18 +88,17 @@ if __name__ == "__main__":
     plt.savefig('./loss_'+args.eq+'.png')
     
     print("4. Inference Session")
-    if args.eq == 'bg':
-        pinn.load_state_dict(torch.load('./'+args.eq+'1d.pth'))
+    pinn.load_state_dict(torch.load('./'+args.eq+'1d.pth'))
+    if args.eq == 'bg':       
         t_test, x_test = data.bg_generator(1e-2, 1/256, typ='test')
         t = np.linspace(0, 0.99, 100).reshape(-1,1)
         x = np.linspace(-1, 1, 256).reshape(-1,1)
         T = t.shape[0]
         N = x.shape[0]
-
+        
         test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
         with torch.no_grad():
             u_pred = pinn(test_variables)
-
         u_pred = u_pred.cpu().numpy().reshape(N,T)
 
         # reference data
@@ -108,8 +106,29 @@ if __name__ == "__main__":
         t = data['t'].flatten()[:,None]
         x = data['x'].flatten()[:,None]
         Exact = np.real(data['usol'])  
+        
     elif args.eq == 'ac':
-        pass ###
+        t = np.linspace(0, 1, 201).reshape(-1,1) # T x 1
+        x = np.linspace(-1, 1, 512).reshape(-1,1) # N x 1
+        T = t.shape[0]
+        N = x.shape[0]
+        T_star = np.tile(t, (1, N)).T  # N x T
+        X_star = np.tile(x, (1, T))  # N x T
+        t_test = T_star.flatten()[:, None] # NT x 1
+        x_test = X_star.flatten()[:, None] # NT x 1
+        u = np.zeros((N, T))  # N x T
+        u[:,0:1] = (x**2)*np.cos(np.pi*x)
+        
+        test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
+        with torch.no_grad():
+            u_pred = model(test_variables)
+        u_pred = u_pred.reshape(N,T)
+        u_pred = u_pred.cpu().numpy()
+        
+        data = scipy.io.loadmat('AC.mat')
+        Exact = np.real(data['uu'])
+        t = data['tt'][0].flatten()[:,None]
+        x = data['x'][0].flatten()[:,None]
     
     err = u_pred-Exact
     err = np.linalg.norm(err,2)/np.linalg.norm(Exact,2)   
@@ -123,25 +142,25 @@ if __name__ == "__main__":
     plt.title("Initial condition ($t=0$)")
     
     plt.subplot(2, 2, 2)
-    t_step = int(0.3*len(t))
+    t_step = int(0.25*len(t))
     plt.plot(x, Exact[:,t_step],'-')
     plt.plot(x, u_pred[:,t_step],'--')
     plt.legend(['Actual', 'Prediction'])
-    plt.title("Initial condition ($t=%.3f$)" %(1e-2*t_step))
+    plt.title("$t=0.25$")
     
     plt.subplot(2, 2, 3)
     t_step = int(0.5*len(t))
     plt.plot(x, Exact[:,t_step],'-')
     plt.plot(x, u_pred[:,t_step],'--')
     plt.legend(['Actual', 'Prediction'])
-    plt.title("Initial condition ($t=%.3f$)" %(1e-2*t_step))
+    plt.title("$t=0.5$")
     
     plt.subplot(2, 2, 4)
-    t_step = int(0.75*len(t))
+    t_step = int(0.99*len(t))
     plt.plot(x, Exact[:,t_step],'-')
     plt.plot(x, u_pred[:,t_step],'--')
     plt.legend(['Actual', 'Prediction'])
-    plt.title("Initial condition ($t=%.3f$)" %(1e-2*t_step))
+    plt.title("$t=0.99$")
     plt.savefig('./inference_'+args.eq+'.png')
     
     plt.figure(figsize=(10, 5))
