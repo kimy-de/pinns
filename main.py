@@ -121,11 +121,11 @@ if __name__ == "__main__":
         
         test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
         with torch.no_grad():
-            u_pred = model(test_variables)
+            u_pred = pinn(test_variables)
         u_pred = u_pred.reshape(N,T)
         u_pred = u_pred.cpu().numpy()
         
-        data = scipy.io.loadmat('AC.mat')
+        data = scipy.io.loadmat('./data/AC.mat')
         Exact = np.real(data['uu'])
         t = data['tt'][0].flatten()[:,None]
         x = data['x'][0].flatten()[:,None]
