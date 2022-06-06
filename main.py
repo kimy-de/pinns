@@ -95,11 +95,6 @@ if __name__ == "__main__":
         x = np.linspace(-1, 1, 256).reshape(-1,1)
         T = t.shape[0]
         N = x.shape[0]
-        
-        test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
-        with torch.no_grad():
-            u_pred = pinn(test_variables)
-        u_pred = u_pred.cpu().numpy().reshape(N,T)
 
         # reference data
         data = scipy.io.loadmat('./data/burgers_shock.mat')  
@@ -113,58 +108,17 @@ if __name__ == "__main__":
         T = t.shape[0]
         N = x.shape[0]
         
-        test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
-        with torch.no_grad():
-            u_pred = pinn(test_variables)
-        u_pred = u_pred.reshape(N,T)
-        u_pred = u_pred.cpu().numpy()
-        
         data = scipy.io.loadmat('./data/AC.mat')
         Exact = np.real(data['uu'])
         err = u_pred-Exact
         
+    test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
+        with torch.no_grad():
+            u_pred = pinn(test_variables)
+        u_pred = u_pred.cpu().numpy().reshape(N,T)
+        
     err = np.linalg.norm(err,2)/np.linalg.norm(Exact,2)   
     print(f"L2 Relative Error: {err}")
 
-    plt.figure(figsize=(10, 10))
-    plt.subplot(2, 2, 1)
-    plt.plot(x, Exact[:,0],'-')
-    plt.plot(x, u_pred[:,0],'--')
-    plt.legend(['Actual', 'Prediction'])
-    plt.title("Initial condition ($t=0$)")
-    
-    plt.subplot(2, 2, 2)
-    t_step = int(0.25*len(t))
-    plt.plot(x, Exact[:,t_step],'-')
-    plt.plot(x, u_pred[:,t_step],'--')
-    plt.legend(['Actual', 'Prediction'])
-    plt.title("$t=0.25$")
-    
-    plt.subplot(2, 2, 3)
-    t_step = int(0.5*len(t))
-    plt.plot(x, Exact[:,t_step],'-')
-    plt.plot(x, u_pred[:,t_step],'--')
-    plt.legend(['Actual', 'Prediction'])
-    plt.title("$t=0.5$")
-    
-    plt.subplot(2, 2, 4)
-    t_step = int(0.99*len(t))
-    plt.plot(x, Exact[:,t_step],'-')
-    plt.plot(x, u_pred[:,t_step],'--')
-    plt.legend(['Actual', 'Prediction'])
-    plt.title("$t=0.99$")
-    plt.savefig('./inference_'+args.eq+'.png')
-    
-    plt.figure(figsize=(10, 5))
-    plt.imshow(u_pred, interpolation='nearest', cmap='jet',
-               extent=[t.min(), t.max(), x.min(), x.max()],
-               origin='lower', aspect='auto')
-    plt.clim(-1, 1)
-    plt.ylim(-1,1)
-    plt.xlim(0,1)
-    plt.scatter(t_data, x_data)
-    plt.xlabel('t')
-    plt.ylabel('x')
-    plt.title('u(t,x)')
-    plt.savefig('./evolution_'+args.eq+'.png')
+    utils.resplot(x, t, t_data, x_data, Exact, u_pred, eq)
     print("5. Completed")
