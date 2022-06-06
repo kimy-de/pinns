@@ -95,6 +95,10 @@ if __name__ == "__main__":
         x = np.linspace(-1, 1, 256).reshape(-1,1)
         T = t.shape[0]
         N = x.shape[0]
+        test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
+        with torch.no_grad():
+            u_pred = pinn(test_variables)
+        u_pred = u_pred.cpu().numpy().reshape(N,T)
 
         # reference data
         data = scipy.io.loadmat('./data/burgers_shock.mat')  
@@ -108,17 +112,17 @@ if __name__ == "__main__":
         T = t.shape[0]
         N = x.shape[0]
         
-        data = scipy.io.loadmat('./data/AC.mat')
-        Exact = np.real(data['uu'])
-        err = u_pred-Exact
-        
-    test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
+        test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
         with torch.no_grad():
             u_pred = pinn(test_variables)
         u_pred = u_pred.cpu().numpy().reshape(N,T)
         
+        data = scipy.io.loadmat('./data/AC.mat')
+        Exact = np.real(data['uu'])
+        err = u_pred-Exact
+
     err = np.linalg.norm(err,2)/np.linalg.norm(Exact,2)   
     print(f"L2 Relative Error: {err}")
 
-    utils.resplot(x, t, t_data, x_data, Exact, u_pred, eq)
+    utils.resplot(x, t, t_data, x_data, Exact, u_pred, args.eq)
     print("5. Completed")
