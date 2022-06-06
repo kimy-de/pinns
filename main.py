@@ -95,6 +95,7 @@ if __name__ == "__main__":
         x = np.linspace(-1, 1, 256).reshape(-1,1)
         T = t.shape[0]
         N = x.shape[0]
+        
         test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
         with torch.no_grad():
             u_pred = pinn(test_variables)
@@ -106,20 +107,25 @@ if __name__ == "__main__":
         err = u_pred[:,:-1]-Exact
         
     elif args.eq == 'ac':
-        t_test, x_test = data.ac_generator(1/201, 1/513, typ='test')
         t = np.linspace(0, 1, 201).reshape(-1,1) # T x 1
         x = np.linspace(-1, 1, 513).reshape(-1,1) # N x 1
         T = t.shape[0]
         N = x.shape[0]
+        T_star = np.tile(t, (1, N)).T  # N x T
+        X_star = np.tile(x, (1, T))  # N x T
+        t_test = T_star.flatten()[:, None]
+        x_test = X_star.flatten()[:, None]
         
         test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
         with torch.no_grad():
             u_pred = pinn(test_variables)
         u_pred = u_pred.cpu().numpy().reshape(N,T)
-        
+        u_pred = u_pred[:-1]
         data = scipy.io.loadmat('./data/AC.mat')
         Exact = np.real(data['uu'])
-        err = u_pred[:,:-1]-Exact
+       
+        err = u_pred-Exact
+        x = x[:-1]
 
     err = np.linalg.norm(err,2)/np.linalg.norm(Exact,2)   
     print(f"L2 Relative Error: {err}")
