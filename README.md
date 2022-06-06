@@ -9,10 +9,10 @@ This repository provides basic PINNs to solve continuous time models without tra
 
 ## 1. Execution examples
 ```bash
-$ python main.py --eq 'bg' --num_hidden 9 --num_nodes 20 --dx 1/256 --dt 0.002                                 
+$ python main.py --eq 'bg' --num_hidden 9 --num_nodes 20 --dx 0.004 --dt 0.002                                 
 ```
 ```bash
-$ python main.py --eq 'ac' --num_hidden 4 --num_nodes 200 --dx 1/256 --dt 0.002                                    
+$ python main.py --eq 'ac' --num_hidden 4 --num_nodes 200 --dx 0.004 --dt 0.002                                    
 ```
 ### 1.1. Default setting
 ```
@@ -24,14 +24,14 @@ L2 relative error, a training loss graph, and two result figures
 ## 2. Results
 ### 2.1. Burgers' equation
 <p align="center">
-<img width="500" alt="r1" src="https://user-images.githubusercontent.com/52735725/172022015-09c094e7-ae69-44fd-9319-b5039e436f15.png">
+<img width="500" alt="r1" src="https://user-images.githubusercontent.com/52735725/172101128-a5aedd20-a871-42ef-b748-9cae98fc1ab0.png">
 <img width="500" alt="r" src="https://user-images.githubusercontent.com/52735725/164943040-a356729e-795e-42ed-b37a-9abf6fa8bb46.png">
 </p>
 
 ### 2.2. Allen-Cahn equation
 <p align="center">
 <img width="500" alt="r1" src="https://user-images.githubusercontent.com/52735725/172065924-8d884678-ced7-4b35-9787-3f934b27870f.png">
-<img width="500" alt="r" src="https://user-images.githubusercontent.com/52735725/172065910-e21e943a-1200-4871-ad3d-a78b9ce49dd1.png">
+<img width="450" alt="r" src="https://user-images.githubusercontent.com/52735725/172100820-ea2d8fa9-a05b-4dfe-87fc-03bde14a47d2.png">
 </p>
 
 ## 3. Datasets
