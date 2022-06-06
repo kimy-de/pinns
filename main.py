@@ -108,7 +108,7 @@ if __name__ == "__main__":
     elif args.eq == 'ac':
         t_test, x_test = data.ac_generator(1/201, 1/512, typ='test')
         t = np.linspace(0, 1, 201).reshape(-1,1) # T x 1
-        x = np.linspace(-1, 1, 512).reshape(-1,1) # N x 1
+        x = np.linspace(-1, 1, 513).reshape(-1,1) # N x 1
         T = t.shape[0]
         N = x.shape[0]
         
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         
         data = scipy.io.loadmat('./data/AC.mat')
         Exact = np.real(data['uu'])
-        err = u_pred-Exact
+        err = u_pred[:,:-1]-Exact
 
     err = np.linalg.norm(err,2)/np.linalg.norm(Exact,2)   
     print(f"L2 Relative Error: {err}")
