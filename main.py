@@ -90,8 +90,8 @@ if __name__ == "__main__":
     print("4. Inference Session")
     pinn.load_state_dict(torch.load('./'+args.eq+'1d.pth'))
     if args.eq == 'bg':       
-        t_test, x_test = data.bg_generator(1e-2, 1/256, typ='test')
-        t = np.linspace(0, 0.99, 100).reshape(-1,1)
+        t_test, x_test = data.bg_generator(1/101, 1/256, typ='test')
+        t = np.linspace(0, 1, 101).reshape(-1,1)
         x = np.linspace(-1, 1, 256).reshape(-1,1)
         T = t.shape[0]
         N = x.shape[0]
@@ -103,21 +103,15 @@ if __name__ == "__main__":
 
         # reference data
         data = scipy.io.loadmat('./data/burgers_shock.mat')  
-        t = data['t'].flatten()[:,None]
-        x = data['x'].flatten()[:,None]
         Exact = np.real(data['usol'])  
+        err = u_pred[:,:-1]-Exact
         
     elif args.eq == 'ac':
+        t_test, x_test = data.ac_generator(1/201, 1/512, typ='test')
         t = np.linspace(0, 1, 201).reshape(-1,1) # T x 1
         x = np.linspace(-1, 1, 512).reshape(-1,1) # N x 1
         T = t.shape[0]
         N = x.shape[0]
-        T_star = np.tile(t, (1, N)).T  # N x T
-        X_star = np.tile(x, (1, T))  # N x T
-        t_test = T_star.flatten()[:, None] # NT x 1
-        x_test = X_star.flatten()[:, None] # NT x 1
-        u = np.zeros((N, T))  # N x T
-        u[:,0:1] = (x**2)*np.cos(np.pi*x)
         
         test_variables = torch.FloatTensor(np.concatenate((t_test, x_test), 1)).to(device)
         with torch.no_grad():
@@ -127,10 +121,8 @@ if __name__ == "__main__":
         
         data = scipy.io.loadmat('./data/AC.mat')
         Exact = np.real(data['uu'])
-        t = data['tt'][0].flatten()[:,None]
-        x = data['x'][0].flatten()[:,None]
-    
-    err = u_pred-Exact
+        err = u_pred-Exact
+        
     err = np.linalg.norm(err,2)/np.linalg.norm(Exact,2)   
     print(f"L2 Relative Error: {err}")
 
@@ -169,6 +161,7 @@ if __name__ == "__main__":
                origin='lower', aspect='auto')
     plt.clim(-1, 1)
     plt.ylim(-1,1)
+    plt.xlim(0,1)
     plt.scatter(t_data, x_data)
     plt.xlabel('t')
     plt.ylabel('x')
