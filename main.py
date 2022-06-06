@@ -108,7 +108,7 @@ if __name__ == "__main__":
         
     elif args.eq == 'ac':
         t = np.linspace(0, 1, 201).reshape(-1,1) # T x 1
-        x = np.linspace(-1, 1, 513).reshape(-1,1) # N x 1
+        x = np.linspace(-1, 1, 513)[:-1].reshape(-1,1) # N x 1
         T = t.shape[0]
         N = x.shape[0]
         T_star = np.tile(t, (1, N)).T  # N x T
@@ -120,12 +120,9 @@ if __name__ == "__main__":
         with torch.no_grad():
             u_pred = pinn(test_variables)
         u_pred = u_pred.cpu().numpy().reshape(N,T)
-        u_pred = u_pred[:-1]
         data = scipy.io.loadmat('./data/AC.mat')
         Exact = np.real(data['uu'])
-       
         err = u_pred-Exact
-        x = x[:-1]
 
     err = np.linalg.norm(err,2)/np.linalg.norm(Exact,2)   
     print(f"L2 Relative Error: {err}")
