@@ -168,6 +168,7 @@ if __name__ == "__main__":
                extent=[t.min(), t.max(), x.min(), x.max()],
                origin='lower', aspect='auto')
     plt.clim(-1, 1)
+    plt.ylim(-1,1)
     plt.scatter(t_data, x_data)
     plt.xlabel('t')
     plt.ylabel('x')
