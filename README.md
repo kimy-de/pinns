@@ -9,14 +9,19 @@ This repository provides basic PINNs to solve continuous time models without tra
 
 ## 1. Execution examples
 ```bash
-$ python main.py --eq 'bg' --num_hidden 9 --num_nodes 20 --dx 0.004 --dt 0.002                                 
+$ python main.py --eq 'bg' --num_hidden 9 --num_nodes 20 --dx 0.0039 --dt 0.01                                 
 ```
 ```bash
-$ python main.py --eq 'ac' --num_hidden 4 --num_nodes 200 --dx 0.004 --dt 0.002                                    
+$ python main.py --eq 'ac' --num_hidden 4 --num_nodes 200 --dx 0.0039 --dt 0.01                                    
 ```
 ### 1.1. Default setting
 ```
-Nu=100, dt=0.02, dx=0.01, lr=0.001, num_epochs=200000, num_hidden=9, num_nodes=20 pretrained=0 eq='bg'
+Nu: the number of initial condition data
+dt, dx: mesh sizes
+num_epochs, lr: the number of epochs, a learning rate 
+num_hidden, num_nodes: number of hidden layers, number of nodes in each hidden layer 
+pretrained: 0: an initialized model, 1: a pretrained model
+eq: 'bg': Burgers' equation, 'ac': Allen-Cahn equation
 ```
 ### 1.2. Outputs
 L2 relative error, a training loss graph, and two result figures
