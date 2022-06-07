@@ -9,7 +9,7 @@ This repository provides basic PINNs to solve continuous time models without ref
 [Reference] M.Raissi, P.Perdikaris, G.E.Karniadakis (2019) Physics-informed neural networks - A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations, Journal of Computational Physics Vol 378 (2019) pages 686–707, https://doi.org/10.1016/j.jcp.2018.10.045
 
 ## 1. Execution examples
-Use the **pinnz.ipynb** file
+Use the **pinns.ipynb** file
 
 ### 1.1. Default setting
 ```python
