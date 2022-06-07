@@ -1,6 +1,6 @@
 # Physics-informed neural networks (Pytorch)
 ### Continuous time models: Burgers' equation / Allen-Cahn equation
-This repository provides basic PINNs to solve continuous time models without training data. That is, this approach does not use any observation data except for initial and boundary condition data. It is challenging to optimize PINNs for complicated PDEs. Using the reference model, good accuracy is achieved for a Burgers' equation, but the inference for an Allen-Cahn equation causes high relative errors compared to that of the Burgers' equation. Thus, diverse optimization approaches and different network architectures have been developed to improve the reference approach.
+This repository provides basic PINNs to solve continuous time models without training data. That is, this approach does not use any observation data except for initial and boundary condition data. It is challenging to optimize PINNs for complicated PDEs. Using the reference model, good accuracy is achieved for a Burgers' equation, but the inference for an Allen-Cahn equation causes high relative errors compared to that of the Burgers' equation.
 
 * The purpose of the repository is to set a baseline using Pytorch for our PINN project.
 * Our model and the reference are not exactly the same. (improved)
@@ -30,10 +30,13 @@ L2 relative error, a training loss graph, and two result figures
 
 ### 2.2. Allen-Cahn equation
 <p align="center">
-<img width="500" alt="r1" src="https://user-images.githubusercontent.com/52735725/172065924-8d884678-ced7-4b35-9787-3f934b27870f.png">
-<img width="450" alt="r" src="https://user-images.githubusercontent.com/52735725/172100820-ea2d8fa9-a05b-4dfe-87fc-03bde14a47d2.png">
+<img width="500" alt="r1" src="https://user-images.githubusercontent.com/52735725/172295341-3a57246b-75d5-49aa-a553-70aea9be8df3.png">
+<img width="500" alt="r" src="https://user-images.githubusercontent.com/52735725/172295382-e49def99-b90a-45ba-9af8-dfb93d7fbe99.png">
 </p>
 
-## 3. Datasets
+## 3. Reference Datasets
 Source: https://github.com/maziarraissi/PINNs
+
+
+
 
