@@ -9,7 +9,7 @@ class LinearBlock(nn.Module):
 
     def forward(self, x):
         x = self.layer(x)
-        x = x*torch.sigmoid(x) 
+        x = torch.tanh(x) 
         return x
 
 class PINN(nn.Module):
@@ -30,7 +30,7 @@ class PINN(nn.Module):
 
     def forward(self, x):
         x = self.input_layer(x)
-        x = x*torch.sigmoid(x)  
+        x = torch.tanh(x) 
         x = self.hidden_layers(x)
         x = self.output_layer(x)
         return x
