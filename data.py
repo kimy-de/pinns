@@ -1,12 +1,9 @@
 import numpy as np
 
-def bg_generator(dt, dx, N_u=0, typ='train'):
-    N_f = int((1/dt)*(1/dx))
-    num_init_cond = N_u
-    num_time = int((1/dt))
-    
-    t = np.linspace(0, 1, int(1/dt)).reshape(-1,1) # T x 1
-    x = np.linspace(-1, 1, int(1/dx)).reshape(-1,1) # N x 1
+def bg_generator(num_t, num_x, typ='train'):
+    N_f = num_t*num_x
+    t = np.linspace(0, 1, num_t).reshape(-1,1) # T x 1
+    x = np.linspace(-1, 1, num_x).reshape(-1,1) # N x 1
     T = t.shape[0]
     N = x.shape[0]
     T_star = np.tile(t, (1, N)).T  # N x T
@@ -24,13 +21,13 @@ def bg_generator(dt, dx, N_u=0, typ='train'):
     x_data_f = x_data.copy()
     
     if typ == 'train':
-        idx = np.where((x_data == -1) | (x_data == 1))[0]
+        idx = np.random.choice(np.where((x_data == -1) | (x_data == 1))[0], num_t)
         t_data = t_data[idx]
         x_data = x_data[idx]
         u_data = u_data[idx]
         
-        init_idx = np.random.choice(N-1, num_init_cond-2, replace=False) + 1
-        t_data = np.concatenate([t_data, np.zeros((num_init_cond-2,1))], axis=0)
+        init_idx = np.random.choice(N-1, num_x-2, replace=False) + 1
+        t_data = np.concatenate([t_data, np.zeros((num_x-2,1))], axis=0)
         x_data = np.concatenate([x_data, x[init_idx]], axis=0)
         u_data = np.concatenate([u_data, u[init_idx,0:1]], axis=0)
         
@@ -39,13 +36,10 @@ def bg_generator(dt, dx, N_u=0, typ='train'):
     else:
         return t_data_f, x_data_f
 
-def ac_generator(dt, dx, N_u=0, typ='train'):
-    N_f = int((1/dt)*(1/dx))
-    num_init_cond = N_u
-    num_time = int((1/dt))
-    
-    t = np.linspace(0, 1, int(1/dt)).reshape(-1,1) # T x 1
-    x = np.linspace(-1, 1, int(1/dx)).reshape(-1,1) # N x 1
+def ac_generator(num_t, num_x, typ='train'):
+    N_f = num_t*num_x
+    t = np.linspace(0, 1, num_t).reshape(-1,1) # T x 1
+    x = np.linspace(-1, 1, num_x).reshape(-1,1) # N x 1
     T = t.shape[0]
     N = x.shape[0]
     T_star = np.tile(t, (1, N)).T  # N x T
@@ -65,13 +59,13 @@ def ac_generator(dt, dx, N_u=0, typ='train'):
     x_data_f = x_data.copy()
     
     if typ == 'train':
-        idx = np.where((x_data == -1) | (x_data == 1))[0]
+        idx = np.random.choice(np.where((x_data == -1) | (x_data == 1))[0], num_t)
         t_data = t_data[idx]
         x_data = x_data[idx]
         u_data = u_data[idx]
         
-        init_idx = np.random.choice(N-1, num_init_cond-4, replace=False) + 1
-        t_data = np.concatenate([t_data, np.ones((2,1)), np.zeros((num_init_cond-4,1))], axis=0)
+        init_idx = np.random.choice(N-1, num_x-4, replace=False) + 1
+        t_data = np.concatenate([t_data, np.ones((2,1)), np.zeros((num_x-4,1))], axis=0)
         x_data = np.concatenate([x_data, np.array([[-1], [1]]), x[init_idx]], axis=0)
         u_data = np.concatenate([u_data, -np.ones((2,1)), u[init_idx,0:1]], axis=0)
         
