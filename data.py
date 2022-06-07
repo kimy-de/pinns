@@ -2,8 +2,8 @@ import numpy as np
 
 def bg_generator(dt, dx, N_u=0, typ='train'):
     N_f = int((1/dt)*(1/dx))
-    num_init_cond = int(N_u*0.7)
-    num_time = N_u - num_init_cond
+    num_init_cond = N_u
+    num_time = int((1/dt))
     
     t = np.linspace(0, 1, int(1/dt)).reshape(-1,1) # T x 1
     x = np.linspace(-1, 1, int(1/dx)).reshape(-1,1) # N x 1
@@ -24,7 +24,7 @@ def bg_generator(dt, dx, N_u=0, typ='train'):
     x_data_f = x_data.copy()
     
     if typ == 'train':
-        idx = np.random.choice(np.where((x_data == -1) | (x_data == 1))[0], num_time)
+        idx = np.where((x_data == -1) | (x_data == 1))[0]
         t_data = t_data[idx]
         x_data = x_data[idx]
         u_data = u_data[idx]
@@ -65,7 +65,7 @@ def ac_generator(dt, dx, N_u=0, typ='train'):
     x_data_f = x_data.copy()
     
     if typ == 'train':
-        idx = np.random.choice(np.where((x_data == -1) | (x_data == 1))[0], num_time)
+        idx = np.where((x_data == -1) | (x_data == 1))[0]
         t_data = t_data[idx]
         x_data = x_data[idx]
         u_data = u_data[idx]
